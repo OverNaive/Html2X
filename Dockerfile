@@ -14,8 +14,8 @@ WORKDIR /home/app
 
 COPY --from=build /home/app/html2x /home/app/html2x
 COPY supervisor/html2x.conf /etc/supervisor/conf.d/html2x.conf
-COPY ttf/times/ /usr/share/fonts/truetype/times/
-COPY ttf/chinese/ /usr/share/fonts/truetype/chinese/
+COPY fonts/times/ /usr/share/fonts/truetype/times/
+COPY fonts/chinese/ /usr/share/fonts/truetype/chinese/
 
 RUN chmod +x html2x \
 && apt-get update \
