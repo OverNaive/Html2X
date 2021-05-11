@@ -1,8 +1,8 @@
-FROM golang:1.16-buster as compile
+FROM golang:1.16-buster as build
 
 WORKDIR /home/app
 
-COPY . .
+COPY src .
 
 RUN go mod download \
 && go build html2x.go
@@ -12,8 +12,8 @@ FROM debian:buster-slim as prod
 
 WORKDIR /home/app
 
-COPY --from=compile /home/app/html2x /home/app/html2x
-COPY ./html2x.conf /etc/supervisor/conf.d/html2x.conf
+COPY --from=build /home/app/html2x /home/app/html2x
+COPY supervisor/html2x.conf /etc/supervisor/conf.d/html2x.conf
 
 RUN chmod +x html2x \
 && apt-get update \
