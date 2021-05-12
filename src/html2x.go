@@ -16,22 +16,22 @@ type requestBody struct {
 	Args []string `json:"args"`
 }
 
-func htmlToPdf(rw http.ResponseWriter, r *http.Request) {
+func htmlToPdf(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
-		http.Error(rw, "Invalid request method", http.StatusMethodNotAllowed)
+		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
 
 	if ! strings.HasPrefix(r.Header.Get("Content-Type"), "application/json") {
-		http.Error(rw, "Invalid content type", http.StatusUnsupportedMediaType)
+		http.Error(w, "Invalid content type", http.StatusUnsupportedMediaType)
 		return
 	}
 
-	var rb requestBody
+	var b requestBody
 
-	err := json.NewDecoder(r.Body).Decode(&rb)
+	err := json.NewDecoder(r.Body).Decode(&b)
 	if err != nil {
-		http.Error(rw, err.Error(), http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -42,23 +42,23 @@ func htmlToPdf(rw http.ResponseWriter, r *http.Request) {
 	defer os.Remove(htmlPath)
 	defer os.Remove(pdfPath)
 
-	err = os.WriteFile(htmlPath, []byte(rb.Html), 0644)
+	err = os.WriteFile(htmlPath, []byte(b.Html), 0644)
 	if err != nil {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	args := rb.Args
+	args := b.Args
 	args = append(args, htmlPath, pdfPath)
 
 	cmd := exec.Command("wkhtmltopdf", args...)
 	_, err = cmd.CombinedOutput()
 	if err != nil {
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	http.ServeFile(rw, r, pdfPath)
+	http.ServeFile(w, r, pdfPath)
 }
 
 func main() {
