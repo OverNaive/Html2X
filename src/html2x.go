@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -61,6 +62,13 @@ func htmlToPdf(rw http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	s := &http.Server{
+		Addr: ":8888",
+		ReadTimeout: 10 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
 	http.HandleFunc("/html-to-pdf", htmlToPdf)
-	http.ListenAndServe(":8888", nil)
+
+	log.Fatal(s.ListenAndServe())
 }
