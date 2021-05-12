@@ -16,20 +16,20 @@ type requestBody struct {
 	Args []string `json:"args"`
 }
 
-func htmlToPdf(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
+func htmlToPdf(w http.ResponseWriter, req *http.Request) {
+	if req.Method != "POST" {
 		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 		return
 	}
 
-	if ! strings.HasPrefix(r.Header.Get("Content-Type"), "application/json") {
+	if ! strings.HasPrefix(req.Header.Get("Content-Type"), "application/json") {
 		http.Error(w, "Invalid content type", http.StatusUnsupportedMediaType)
 		return
 	}
 
 	var b requestBody
 
-	err := json.NewDecoder(r.Body).Decode(&b)
+	err := json.NewDecoder(req.Body).Decode(&b)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -58,7 +58,7 @@ func htmlToPdf(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.ServeFile(w, r, pdfPath)
+	http.ServeFile(w, req, pdfPath)
 }
 
 func main() {
