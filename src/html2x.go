@@ -16,6 +16,16 @@ type requestBody struct {
 }
 
 func htmlToPdf(rw http.ResponseWriter, r *http.Request) {
+	if r.Method != "POST" {
+		http.Error(rw, "Invalid request method", http.StatusMethodNotAllowed)
+		return
+	}
+
+	if ! strings.HasPrefix(r.Header.Get("Content-Type"), "application/json") {
+		http.Error(rw, "Invalid content type", http.StatusUnsupportedMediaType)
+		return
+	}
+
 	var rb requestBody
 
 	err := json.NewDecoder(r.Body).Decode(&rb)
