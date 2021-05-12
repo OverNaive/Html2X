@@ -17,7 +17,12 @@ type requestBody struct {
 
 func htmlToPdf(rw http.ResponseWriter, r *http.Request) {
 	var rb requestBody
-	json.NewDecoder(r.Body).Decode(&rb)
+
+	err := json.NewDecoder(r.Body).Decode(&rb)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	now := strconv.FormatInt(time.Now().UnixNano(), 10)
 	htmlPath := strings.Join([]string{now, ".html"}, "")
@@ -26,13 +31,21 @@ func htmlToPdf(rw http.ResponseWriter, r *http.Request) {
 	defer os.Remove(htmlPath)
 	defer os.Remove(pdfPath)
 
-	os.WriteFile(htmlPath, []byte(rb.Html), 0644)
+	err = os.WriteFile(htmlPath, []byte(rb.Html), 0644)
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	args := rb.Args
 	args = append(args, htmlPath, pdfPath)
 
 	cmd := exec.Command("wkhtmltopdf", args...)
-	cmd.CombinedOutput()
+	_, err = cmd.CombinedOutput()
+	if err != nil {
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
 
 	http.ServeFile(rw, r, pdfPath)
 }
