@@ -113,8 +113,8 @@ func main() {
 		WriteTimeout: 10 * time.Second,
 	}
 
-	http.HandleFunc("/html-to-pdf", htmlToPdf)
-	http.HandleFunc("/html-to-img", htmlToImg)
+	http.HandleFunc("/wk/html-to-pdf", htmlToPdf)
+	http.HandleFunc("/wk/html-to-img", htmlToImg)
 
 	log.Fatal(s.ListenAndServe())
 }
