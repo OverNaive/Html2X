@@ -20,8 +20,7 @@ COPY --from=build /home/app/html2x /home/app/html2x
 COPY supervisor/html2x.conf /etc/supervisor/conf.d/html2x.conf
 
 # fonts
-COPY fonts/times/ /usr/share/fonts/truetype/times/
-COPY fonts/chinese/ /usr/share/fonts/truetype/chinese/
+COPY fonts/ /usr/share/fonts/truetype/
 
 RUN chmod +x html2x \
 && apt-get update \
