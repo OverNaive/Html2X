@@ -6,7 +6,7 @@ COPY src .
 
 # build
 RUN go mod download \
-&& go build html2x.go
+&& go build -o html2x *.go
 
 
 FROM debian:buster-slim as prod
