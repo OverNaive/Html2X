@@ -4,17 +4,8 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"os"
-	"os/exec"
-	"strconv"
-	"strings"
 	"time"
 )
-
-type requestBody struct {
-	Html string `json:"html"`
-	Args []string `json:"args"`
-}
 
 func htmlToPdf(w http.ResponseWriter, req *http.Request) {
 	var b requestBody
@@ -32,24 +23,10 @@ func htmlToPdf(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	now := strconv.FormatInt(time.Now().UnixNano(), 10)
-	htmlPath := strings.Join([]string{now, ".html"}, "")
-	pdfPath := strings.Join([]string{now, ".pdf"}, "")
+	var pdfPath string
+	pdfPath, err = b.ToPdf()
+	defer b.Remove()
 
-	defer os.Remove(htmlPath)
-	defer os.Remove(pdfPath)
-
-	err = os.WriteFile(htmlPath, []byte(b.Html), 0644)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	args := b.Args
-	args = append(args, htmlPath, pdfPath)
-
-	cmd := exec.Command("wkhtmltopdf", args...)
-	_, err = cmd.CombinedOutput()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -74,24 +51,10 @@ func htmlToImg(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	now := strconv.FormatInt(time.Now().UnixNano(), 10)
-	htmlPath := strings.Join([]string{now, ".html"}, "")
-	imgPath := strings.Join([]string{now, ".jpg"}, "")
+	var imgPath string
+	imgPath, err = b.ToImg()
+	defer b.Remove()
 
-	defer os.Remove(htmlPath)
-	defer os.Remove(imgPath)
-
-	err = os.WriteFile(htmlPath, []byte(b.Html), 0644)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	args := b.Args
-	args = append(args, htmlPath, imgPath)
-
-	cmd := exec.Command("wkhtmltoimage", args...)
-	_, err = cmd.CombinedOutput()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
