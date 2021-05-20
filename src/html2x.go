@@ -42,7 +42,7 @@ func htmlToImg(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		var mr *malformedRequest
 
-		if errors.Is(err, mr) {
+		if errors.As(err, &mr) {
 			http.Error(w, mr.msg, mr.status)
 		} else {
 			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
