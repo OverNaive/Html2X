@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-func htmlToPdf(w http.ResponseWriter, req *http.Request) {
-	var b requestBody
+func htmlToPdf(w http.ResponseWriter, r *http.Request) {
+	var rb requestBody
 
-	err := parseRequest(req, &b)
+	err := parseRequest(r, &rb)
 	if err != nil {
 		var mr *malformedRequest
 
@@ -24,21 +24,21 @@ func htmlToPdf(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var pdfPath string
-	pdfPath, err = b.ToPdf()
-	defer b.Remove()
+	pdfPath, err = rb.ToPdf()
+	defer rb.Remove()
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	http.ServeFile(w, req, pdfPath)
+	http.ServeFile(w, r, pdfPath)
 }
 
-func htmlToImg(w http.ResponseWriter, req *http.Request) {
-	var b requestBody
+func htmlToImg(w http.ResponseWriter, r *http.Request) {
+	var rb requestBody
 
-	err := parseRequest(req, &b)
+	err := parseRequest(r, &rb)
 	if err != nil {
 		var mr *malformedRequest
 
@@ -52,15 +52,15 @@ func htmlToImg(w http.ResponseWriter, req *http.Request) {
 	}
 
 	var imgPath string
-	imgPath, err = b.ToImg()
-	defer b.Remove()
+	imgPath, err = rb.ToImg()
+	defer rb.Remove()
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	http.ServeFile(w, req, imgPath)
+	http.ServeFile(w, r, imgPath)
 }
 
 func main() {
