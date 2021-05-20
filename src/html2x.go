@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -17,21 +17,18 @@ type requestBody struct {
 }
 
 func htmlToPdf(w http.ResponseWriter, req *http.Request) {
-	if req.Method != "POST" {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	if ! strings.HasPrefix(req.Header.Get("Content-Type"), "application/json") {
-		http.Error(w, "Invalid content type", http.StatusUnsupportedMediaType)
-		return
-	}
-
 	var b requestBody
 
-	err := json.NewDecoder(req.Body).Decode(&b)
+	err := parseRequest(req, &b)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		var mr *malformedRequest
+
+		if errors.Is(err, mr) {
+			http.Error(w, mr.msg, mr.status)
+		} else {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		}
+
 		return
 	}
 
@@ -62,21 +59,18 @@ func htmlToPdf(w http.ResponseWriter, req *http.Request) {
 }
 
 func htmlToImg(w http.ResponseWriter, req *http.Request) {
-	if req.Method != "POST" {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
-	if ! strings.HasPrefix(req.Header.Get("Content-Type"), "application/json") {
-		http.Error(w, "Invalid content type", http.StatusUnsupportedMediaType)
-		return
-	}
-
 	var b requestBody
 
-	err := json.NewDecoder(req.Body).Decode(&b)
+	err := parseRequest(req, &b)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		var mr *malformedRequest
+
+		if errors.Is(err, mr) {
+			http.Error(w, mr.msg, mr.status)
+		} else {
+			http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		}
+
 		return
 	}
 
