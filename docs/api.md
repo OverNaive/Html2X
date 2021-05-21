@@ -20,6 +20,7 @@
   |args|object|是|配置参数，key:value 的格式，详见：[wkhtmltopdf usage](https://overnaive.github.io/Html2X/docs/wkhtmltopdf.txt)|
 
 > 示例
+
 ```json
 {
   "html": "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>这是一个HTML5的网页</title></head><body><p>Hello HTML5</p></body></html>",
@@ -69,6 +70,7 @@
   |ext|string|否|图片后缀，默认值为 `jpg`|
 
 > 示例
+
 ```json
 {
   "html": "<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>这是一个HTML5的网页</title></head><body><p>Hello HTML5</p></body></html>",
