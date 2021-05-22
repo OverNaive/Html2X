@@ -1,4 +1,3 @@
-# Html2X (html to pdf & html to img)
 
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/OverNaive/Html2X)](https://github.com/OverNaive/Html2X/releases)
 [![GitHub go.mod Go version (subdirectory of monorepo)](https://img.shields.io/github/go-mod/go-version/OverNaive/Html2X?filename=src%2Fgo.mod)](https://github.com/golang/go)
